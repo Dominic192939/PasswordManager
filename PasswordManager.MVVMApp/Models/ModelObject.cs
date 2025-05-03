@@ -1,0 +1,62 @@
+﻿using PasswordManager.Common.Contracts;
+using System;
+using System.Collections;
+using System.Linq;
+
+namespace PasswordManager.WebApi.Models
+{
+    /// <summary>
+    /// Represents an abstract base class for model objects that are identifiable.
+    /// </summary>
+    public abstract class ModelObject : IIdentifiable
+    {
+        #region fields
+        public Guid Guid { get; set; }
+        #endregion fields
+
+        #region methods
+        /// <summary>
+        /// Determines whether two object instances are equal
+        /// </summary>
+        /// <param name="obj1">The object to compare with the second object.</param>
+        /// <param name="obj2">The object to compare with the first object.</param>
+        /// <returns>true if the specified object is equal to the current object; otherwise, false.</returns>
+        protected static bool IsEqualsWith(object? obj1, object? obj2)
+        {
+            bool result = false;
+
+            if (obj1 == null && obj2 == null)
+            {
+                result = true;
+            }
+            else if (obj1 != null && obj2 != null)
+            {
+                if (obj1 is IEnumerable objEnum1
+                && obj2 is IEnumerable objEnum2)
+                {
+                    var enumerable1 = objEnum1.Cast<object>().ToList();
+                    var enumerable2 = objEnum2.Cast<object>().ToList();
+
+                    result = enumerable1.SequenceEqual(enumerable2);
+                }
+                else
+                {
+                    result = obj1.Equals(obj2);
+                }
+            }
+            return result;
+        }
+
+        public void AfterCopyProperties(IIdentifiable other) { }
+
+
+        public void BeforeCopyProperties(IIdentifiable other, ref bool handled) { }
+
+
+        void IIdentifiable.AfterCopyProperties(IIdentifiable other) { }
+
+
+        void IIdentifiable.BeforeCopyProperties(IIdentifiable other, ref bool handled) { }
+        #endregion methods
+    }
+}
