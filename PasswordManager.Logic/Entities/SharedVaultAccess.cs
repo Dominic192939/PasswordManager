@@ -1,4 +1,5 @@
 ﻿using PasswordManager.Common.Contracts;
+using System.Security.Cryptography;
 
 namespace PasswordManager.Logic.Entities
 {
@@ -18,24 +19,16 @@ namespace PasswordManager.Logic.Entities
         public byte[] EncryptedSharingKey { get; set; } = [];
 
         [Required]
-        public byte[] SharingKeyNonce { get; set; } = [];
-
-        [Required]
-        public byte[] SharingKeyTag { get; set; } = [];
-
-        [Required]
         public string Permissions { get; set; } = string.Empty;
 
         public DateTime ExpiresAt { get; set; }
 
         public void AfterCopyProperties(ISharedVaultAccess other)
         {
-            throw new NotImplementedException();
         }
 
         public void BeforeCopyProperties(ISharedVaultAccess other, ref bool handled)
         {
-            throw new NotImplementedException();
         }
     }
 }

@@ -3,8 +3,6 @@
     public partial interface ISharedVaultAccess : IIdentifiable
     {
         byte[] EncryptedSharingKey { get; set; }
-        byte[] SharingKeyNonce { get; set; }
-        byte[] SharingKeyTag { get; set; }
         string Permissions { get; set; }
         DateTime ExpiresAt { get; set; }
 
@@ -20,8 +18,6 @@
             {
                 ((IIdentifiable)this).CopyProperties(other);
                 EncryptedSharingKey = other.EncryptedSharingKey;
-                SharingKeyNonce = other.SharingKeyNonce;
-                SharingKeyTag = other.SharingKeyTag;
                 Permissions = other.Permissions;
                 ExpiresAt = other.ExpiresAt;
             }
