@@ -49,9 +49,9 @@ Diese Lösung begegnet Sicherheitsrisiken und Problemen in der Benutzerfreundlic
 | U4   | `User`  | WENN | Create/Update | ein `Nickname` angegeben wird,                                                                   | Eingabekonsistenz     |
 |      |         | DANN |               | muss dieser mindestens 3 und maximal 64 Zeichen enthalten (ohne nur Leerzeichen).                | Optionales Feld       |
 | U5   | `User`  | WENN | Create/Update | ein `Age` gesetzt wird,                                                                           | Altersfreigabe        |
-|      |         | DANN |               | muss dieser mindestens 13 Jahre betragen.                                                        |                       |
+|      |         | DANN |               | muss dieser mindestens 12 Jahre betragen.                                                        |                       |
 | U6   | `User`  | WENN | Create/Update | ein `PublicKey` angegeben wird,                                                                   | Sicherheit             |
-|      |         | DANN |               | darf dieser nicht leer sein.                                                                     |                       |                                       |                       |
+|      |         | DANN |               | darf dieser nicht leer sein.                                                                     |                       |        
 
 ---
 

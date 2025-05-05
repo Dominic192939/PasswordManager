@@ -32,10 +32,10 @@ namespace PasswordManager.Logic.Entities
             {
                 throw new BusinessRuleException("Nickname must have at least 3 non-whitespace characters.");
             }
-            // U5: Age must be at least 13
-            if (Age < 13)
+            // U5: Age must be at least 12
+            if (Age < 12)
             {
-                throw new BusinessRuleException("User must be at least 13 years old.");
+                throw new BusinessRuleException("User must be at least 12 years old.");
             }
             // U6: PublicKey must not be null or empty
             if (PublicKey is null || PublicKey.Length == 0)
