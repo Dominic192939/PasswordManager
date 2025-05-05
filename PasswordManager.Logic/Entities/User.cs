@@ -5,7 +5,7 @@
     {
         [Required]
         public int Age { get; set; }
-        public string Nickname { get; set; } = string.Empty;
-
+        [MaxLength(64)]
+        public string? Nickname { get; set; }
     }
 }
