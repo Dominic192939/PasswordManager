@@ -218,5 +218,32 @@ namespace PasswordManager.WebApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        /// <summary>
+        /// Erstellt einen neuen MockVaultEntry.
+        /// </summary>
+        /// <param name="model">Das Model für den neuen Eintrag.</param>
+        /// <returns>Der erstellte Eintrag mit Status 201 Created.</returns>
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<TModel> Post([FromBody] TModel model)
+        {
+            try
+            {
+                using var context = GetContext();
+                var dbSet = GetDbSet(context);
+
+                var entity = ToEntity(model, null);
+                dbSet.Add(entity);
+                context.SaveChanges();
+
+                var resultModel = ToModel(entity);
+                return CreatedAtAction(nameof(Get), new { id = entity.Guid }, resultModel);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
