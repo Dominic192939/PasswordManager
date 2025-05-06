@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.Input;
-using Newtonsoft.Json;
 using PasswordManager.MVVMApp.Models;
 using PasswordManager.MVVMApp.Views;
 using System;
@@ -13,71 +12,46 @@ namespace PasswordManager.MVVMApp.ViewModels
 {
     public partial class MockVaultEntryViewModel : ViewModelBase
     {
+        #region fields
+        private MockVaultEntry _model = new();
+        #endregion 
+
+        #region properties
         public string Name
         {
             get => Model.Name;
-            set
-            {
-                Model.Name = value;
-            }
+            set => Model.Name = value;
         }
-
         public Guid Guid
         {
             get => Model.Guid;
-            set
-            {
-                Model.Guid = value;
-            }
+            set => Model.Guid = value;
         }
-
         public string Url
         {
             get => Model.Url;
-            set
-            {
-                Model.Url = value;
-            }
+            set => Model.Url = value;
         }
-
         public string UserName
         {
             get => Model.UserName;
-            set
-            {
-                Model.UserName = value;
-            }
+            set => Model.UserName = value;
         }
-
         public string Email
         {
             get => Model.Email;
-            set
-            {
-                Model.Email = value;
-            }
-            
+            set => Model.Email = value;
         }
-
         public string Password
         {
             get => Model.Password;
-            set
-            {
-                Model.Password = value;
-            }
+            set => Model.Password = value;
         }
-
         public DateTime CreatedAt
         {
             get => Model.CreatedAt;
-            set
-            {
-                Model.CreatedAt = value;
-            }
+            set => Model.CreatedAt = value;
         }
-
-        private MockVaultEntry _model = new();
 
         public Action? CloseAction { get; set; }
         public MockVaultEntry Model
@@ -85,17 +59,22 @@ namespace PasswordManager.MVVMApp.ViewModels
             get => _model;
             set => _model = value ?? new();
         }
+        #endregion properties
 
-        public ICommand EditItemCommand { get; }
-        public ICommand DeleteItemCommand { get; }
+        #region command properties
+        public ICommand SaveCommand { get; }
+        public ICommand CancelCommand { get; }
+        #endregion command properties
 
-
-
+        #region constructors
         public MockVaultEntryViewModel()
         {
-            DeleteItemCommand = new RelayCommand(() => Close());
-            EditItemCommand = new RelayCommand(() => Save());
+            CancelCommand = new RelayCommand(() => Close());
+            SaveCommand = new RelayCommand(() => Save());
         }
+        #endregion constructors
+
+        #region command methods
         private void Close()
         {
             CloseAction?.Invoke();
@@ -109,8 +88,6 @@ namespace PasswordManager.MVVMApp.ViewModels
             {
                 if (Model.Guid == Guid.Empty)
                 {
-                    // Replace the problematic lines with the following:
-
                     var response = await httpClient.PostAsync(
                         "MockVaultEntries",
                         new StringContent(
@@ -156,5 +133,6 @@ namespace PasswordManager.MVVMApp.ViewModels
                 CloseAction?.Invoke();
             }
         }
+        #endregion command methods
     }
 }

@@ -1,0 +1,19 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:PasswordManager.MVVMApp.ViewModels"
+		xmlns:views="using:PasswordManager.MVVMApp.Views"
+        mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="650"
+        x:Class="PasswordManager.MVVMApp.MockEntryWindow"
+		x:DataType="vm:MockVaultEntryViewModel"
+		WindowStartupLocation="CenterOwner"
+        Title="MockEntry">
+	
+	<Window.DataContext>
+		<vm:MockVaultEntryViewModel/>
+	</Window.DataContext>
+
+	<views:VaultEntryView DataContext="{Binding}" />
+
+</Window>

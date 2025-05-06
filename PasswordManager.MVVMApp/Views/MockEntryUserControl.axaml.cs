@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace PasswordManager.MVVMApp.Views;
 
-public partial class UserDataUserControl : UserControl
+public partial class MockEntryUserControl : UserControl
 {
-    public UserDataUserControl()
+    public MockEntryUserControl()
     {
         InitializeComponent();
     }

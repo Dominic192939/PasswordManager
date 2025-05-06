@@ -1,230 +1,162 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using Newtonsoft.Json;
-using PasswordManager.Common.Modules.Configuration;
+﻿using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Threading;
+using CommunityToolkit.Mvvm.Input;
+using PasswordManager.MVVMApp.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
-using System.Windows.Input;
+using Avalonia.Controls;
 
 namespace PasswordManager.MVVMApp.ViewModels
 {
     public partial class MockVaultEntriesViewModel : ViewModelBase
     {
-        public MockVaultEntriesViewModel()
-        {
-            AddItemCommand = new RelayCommand(OnAddItemAsync);
-            LoadModelsCommand = new AsyncRelayCommand(OnLoadModelsAsync);
-            EditItemCommand = new RelayCommand<MockVaultEntryViewModel>(OnEditItemAsync);
-            DeleteItemCommand = new RelayCommand<MockVaultEntryViewModel>(OnDeleteItemAsync);
-            Models = new ObservableCollection<MockVaultEntryViewModel>();
+        #region fields
+        private string _filter = string.Empty;
+        private Models.MockVaultEntry? selectedItem;
+        private List<Models.MockVaultEntry> _entities = [];
+        #endregion fields
 
-            _ = OnLoadModelsAsync();
-        }
-        #region Properties
-        private string _filter;
-        private MockVaultEntryViewModel _selectedItem;
-        private ObservableCollection<MockVaultEntryViewModel> _models;
-        private ObservableCollection<MockVaultEntryViewModel> _filteredModels;
-
-        public ObservableCollection<MockVaultEntryViewModel> Models
-        {
-            get => _models;
-            private set => SetProperty(ref _models, value);
-        }
-
-        public ObservableCollection<MockVaultEntryViewModel> FilteredModels
-        {
-            get => _filteredModels;
-            private set => SetProperty(ref _filteredModels, value);
-        }
-
-        public MockVaultEntryViewModel SelectedItem
-        {
-            get => _selectedItem;
-            set => SetProperty(ref _selectedItem, value);
-        }
+        #region properties
+        public ObservableCollection<Models.MockVaultEntry> Entities { get; } = [];
         public string Filter
         {
-            get => _filter;
+            get
+            {
+                return _filter;
+            }
             set
             {
-                if (_filter != value)
+                _filter = value;
+                ApplyFilter(value);
+                OnPropertyChanged();
+            }
+        }
+        public Models.MockVaultEntry SelectedItem
+        {
+            get => selectedItem;
+            set
+            {
+                selectedItem = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion properties
+
+        #region commands
+        [RelayCommand]
+        public async Task LoadItems()
+        {
+            await LoadEntitiesAsync();
+        }
+        [RelayCommand]
+        public async Task AddItem()
+        {
+            var companyWindow = new MockEntryWindow();
+            var viewModel = new MockVaultEntryViewModel { CloseAction = companyWindow.Close };
+
+            companyWindow.DataContext = viewModel;
+            // Aktuelles Hauptfenster als Parent setzen
+            var mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+            if (mainWindow != null)
+            {
+                await companyWindow.ShowDialog(mainWindow);
+                _ = LoadEntitiesAsync();
+            }
+        }
+        [RelayCommand]
+        public async Task EditItem(Models.MockVaultEntry entity)
+        {
+            var companyWindow = new MockEntryWindow();
+            var viewModel = new MockVaultEntryViewModel { Model = entity, CloseAction = companyWindow.Close };
+
+            companyWindow.DataContext = viewModel;
+            // Aktuelles Hauptfenster als Parent setzen
+            var mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+
+            if (mainWindow != null)
+            {
+                await companyWindow.ShowDialog(mainWindow);
+                _ = LoadEntitiesAsync();
+            }
+        }
+        [RelayCommand]
+        public async Task DeleteItem(Models.MockVaultEntry entity)
+        {
+            var messageDialog = new MessageDialog("Delete", $"Wollen Sie die Firma '{entity.Name}' löschen?", MessageType.Question);
+            var mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+
+            // Aktuelles Hauptfenster als Parent setzen
+            await messageDialog.ShowDialog(mainWindow!);
+
+            if (messageDialog.Result == MessageResult.Yes)
+            {
+                using var httpClient = new HttpClient { BaseAddress = new Uri(API_BASE_URL) };
+
+
+                var response = await httpClient.DeleteAsync($"MockVaultEntries/{entity.Guid}");
+
+                if (response.IsSuccessStatusCode == false)
                 {
-                    _filter = value;
-                    OnPropertyChanged();
-                    ApplyFilter();
+                    messageDialog = new MessageDialog("Error", "Beim Löschen ist ein Fehler aufgetreten!", MessageType.Error);
+                    await messageDialog.ShowDialog(mainWindow!);
+                }
+                else
+                {
+                    _ = LoadEntitiesAsync();
                 }
             }
         }
-        #endregion
+        #endregion commands
 
-        #region Commands
-        public ICommand AddItemCommand { get; }
-        public ICommand LoadModelsCommand { get; }
-        public ICommand EditItemCommand { get; }
-        public ICommand DeleteItemCommand { get; }
-        #endregion Commands
-
-        #region Command Methods
-        private async void OnAddItemAsync()
+        private async void ApplyFilter(string filter)
         {
-            var vm = new MockVaultEntryViewModel
+            // UI-Update sicherstellen
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                Name = "Neuer Eintrag",
-                UserName = "Benutzer",
-                Password = "Passwort"
-            };
+                var selectedItem = SelectedItem;
 
-            string url = "https://localhost:7203/api/MockVaultEntries";
-            try
-            {
-                using var client = new HttpClient();
-                var content = new StringContent(JsonConvert.SerializeObject(vm), System.Text.Encoding.UTF8, "application/json");
-                var response = await client.PostAsync(url, content);
-                response.EnsureSuccessStatusCode();
-
-                var json = await response.Content.ReadAsStringAsync();
-                var created = JsonConvert.DeserializeObject<Models.MockVaultEntry>(json);
-
-                Models.Add(vm);
-                ApplyFilter();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Fehler beim Erstellen: {ex.Message}");
-            }
-        }
-
-        private async Task OnLoadModelsAsync()
-        {
-            string url = "https://localhost:7203/api/MockVaultEntries";
-
-            try
-            {
-                using var client = new HttpClient();
-                var response = await client.GetAsync(url);
-                response.EnsureSuccessStatusCode();
-
-                var json = await response.Content.ReadAsStringAsync();
-                var entries = JsonConvert.DeserializeObject<List<Models.MockVaultEntry>>(json);
-
-                Models.Clear();
-                foreach (var entry in entries)
+                Entities.Clear();
+                foreach (var entity in _entities)
                 {
-                    Models.Add(new MockVaultEntryViewModel
+                    if (entity.ToString().Contains(filter, StringComparison.OrdinalIgnoreCase))
                     {
-                        Name = entry.Name,
-                        UserName = entry.UserName,
-                        Password = entry.Password,
-                        Url = entry.Url,
-                        Email = entry.Email
-                    });
+                        Entities.Add(entity);
+                    }
                 }
-
-                ApplyFilter();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Fehler beim Laden: {ex.Message}");
-            }
+                if (selectedItem != null)
+                {
+                    SelectedItem = Entities.FirstOrDefault(e => e.Guid == selectedItem.Guid);
+                }
+            });
         }
-
-
-        private async void OnEditItemAsync(MockVaultEntryViewModel entry)
+        private async Task LoadEntitiesAsync()
         {
-            if (entry == null || entry.Guid == Guid.Empty) return;
-
-            string url = $"https://localhost:7203/api/MockVaultEntries/{entry.Guid}";
-
             try
             {
-                using var client = new HttpClient();
-                var content = new StringContent(JsonConvert.SerializeObject(entry), System.Text.Encoding.UTF8, "application/json");
-                var response = await client.PutAsync(url, content);
-                response.EnsureSuccessStatusCode();
+                using var httpClient = new HttpClient { BaseAddress = new Uri(API_BASE_URL) };
+                var response = await httpClient.GetStringAsync("MockVaultEntries");
+                var entities = JsonSerializer.Deserialize<List<Models.MockVaultEntry>>(response, _jsonSerializerOptions);
 
-                // Optional: Result aus Response aktualisieren
-                var json = await response.Content.ReadAsStringAsync();
-                var updated = JsonConvert.DeserializeObject<Models.MockVaultEntry>(json);
-
-                ApplyFilter();
+                if (entities != null)
+                {
+                    _entities.Clear();
+                    foreach (var entity in entities)
+                    {
+                        _entities.Add(entity);
+                    }
+                    ApplyFilter(Filter);
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Fehler beim Bearbeiten: {ex.Message}");
+                Console.WriteLine($"Error loading companies: {ex.Message}");
             }
         }
-
-        private async void OnDeleteItemAsync(MockVaultEntryViewModel entry)
-        {
-            if (entry == null || entry.Guid == Guid.Empty) return;
-
-            string url = $"https://localhost:7203/api/MockVaultEntries/{entry.Guid}";
-
-            try
-            {
-                using var client = new HttpClient();
-                var response = await client.DeleteAsync(url);
-                response.EnsureSuccessStatusCode();
-
-                Models.Remove(entry);
-                ApplyFilter();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Fehler beim Löschen: {ex.Message}");
-            }
-        }
-        #endregion
-
-        #region Filter Logic
-        private void ApplyFilter()
-        {
-            if (string.IsNullOrWhiteSpace(Filter))
-            {
-                FilteredModels = new ObservableCollection<MockVaultEntryViewModel>(Models);
-            }
-            else
-            {
-                var lower = Filter.ToLowerInvariant();
-                var filtered = Models.Where(m =>
-                    (!string.IsNullOrEmpty(m.Name) && m.Name.ToLowerInvariant().Contains(lower)) ||
-                    (!string.IsNullOrEmpty(m.UserName) && m.UserName.ToLowerInvariant().Contains(lower))
-                );
-                FilteredModels = new ObservableCollection<MockVaultEntryViewModel>(filtered);
-            }
-        }
-        #endregion
-
-
-
-        /// <summary>
-        /// Initializes the class (created by the generator).
-        /// </summary>
-        static MockVaultEntriesViewModel()
-        {
-            ClassConstructing();
-            ClassConstructed();
-        }
-        /// <summary>
-        /// This method is called before the construction of the class.
-        /// </summary>
-        static partial void ClassConstructing();
-        /// <summary>
-        /// This method is called when the class is constructed.
-        /// </summary>
-        static partial void ClassConstructed();
-
-        /// <summary>
-        /// This method is called the object is being constraucted.
-        /// </summary>
-        partial void Constructing();
-        /// <summary>
-        /// This method is called when the object is constructed.
-        /// </summary>
-        partial void Constructed();
     }
 }

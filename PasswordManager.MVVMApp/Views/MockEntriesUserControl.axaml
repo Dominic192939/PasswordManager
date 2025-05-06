@@ -1,0 +1,94 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:PasswordManager.MVVMApp.ViewModels"
+             xmlns:controls="using:Avalonia.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="PasswordManager.MVVMApp.Views.MockEntriesUserControl"
+             x:DataType="vm:MockVaultEntriesViewModel">
+
+	<UserControl.DataContext>
+		<vm:MockVaultEntriesViewModel/>
+	</UserControl.DataContext>
+
+	<Grid Margin="10">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+
+		<Grid Grid.Column="0" Grid.Row="0" Margin="0 0 0 10">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="35" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="35" />
+			</Grid.ColumnDefinitions>
+
+			<Button Grid.Column="0" Grid.Row="0"
+                    Background="Transparent"
+                    Command="{Binding AddItemCommand}">
+				<StackPanel Orientation="Horizontal" Width="20" Height="20">
+					<Image Source="/Assets/add.png" />
+				</StackPanel>
+			</Button>
+
+			<TextBox Grid.Column="1" Grid.Row="0"
+                     Watermark="Geben Sie hier einen Filter ein"
+                     Text="{Binding Filter}"
+                     HorizontalAlignment="Stretch" />
+
+			<Button Grid.Column="2" Grid.Row="0"
+                    Background="Transparent"
+                    Command="{Binding LoadItemsCommand}">
+				<StackPanel Orientation="Horizontal" Width="20" Height="20">
+					<Image Stretch="" Source="/Assets/reload.png" />
+				</StackPanel>
+			</Button>
+		</Grid>
+
+		<controls:DataGrid Grid.Column="0" Grid.Row="1"
+                           x:Name="dataGrid"
+                           BorderThickness="1"
+                           BorderBrush="Gray"
+                           IsReadOnly="True"
+                           ItemsSource="{Binding Entities}"
+                           SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                           AutoGenerateColumns="True">
+			<controls:DataGrid.Columns>
+				<controls:DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+				<controls:DataGridTextColumn Header="URL" Binding="{Binding Url}" />
+				<controls:DataGridTextColumn Header="Benutzername" Binding="{Binding UserName}" />
+				<controls:DataGridTextColumn Header="E-Mail" Binding="{Binding Email}" />
+				<controls:DataGridTextColumn Header="Passwort" Binding="{Binding Password}" />
+				<controls:DataGridTemplateColumn Width="Auto" Header="Aktionen">
+					<controls:DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<StackPanel Orientation="Horizontal">
+								<Button
+                                    Background="Transparent"
+                                    Command="{Binding #dataGrid.((vm:MockVaultEntriesViewModel)DataContext).EditItemCommand}"
+                                    CommandParameter="{Binding}">
+									<StackPanel Orientation="Horizontal" Width="20" Height="20">
+										<Image Stretch="" Source="/Assets/edit.png" />
+									</StackPanel>
+								</Button>
+								<Button
+                                    Background="Transparent"
+                                    Command="{Binding #dataGrid.((vm:MockVaultEntriesViewModel)DataContext).DeleteItemCommand}"
+                                    CommandParameter="{Binding}">
+									<StackPanel Orientation="Horizontal" Width="20" Height="20">
+										<Image Stretch="" Source="/Assets/delete.png" />
+									</StackPanel>
+								</Button>
+							</StackPanel>
+						</DataTemplate>
+					</controls:DataGridTemplateColumn.CellTemplate>
+				</controls:DataGridTemplateColumn>
+			</controls:DataGrid.Columns>
+		</controls:DataGrid>
+	</Grid>
+</UserControl>

@@ -1,0 +1,92 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:PasswordManager.MVVMApp.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="PasswordManager.MVVMApp.Views.MockEntryUserControl"
+             x:DataType="vm:MockVaultEntryViewModel">
+
+    <UserControl.DataContext>
+        <vm:MockVaultEntryViewModel/>
+    </UserControl.DataContext>
+
+    <Grid>
+        <!-- Border zentriert -->
+        <Border Width="320"
+                Padding="24"
+                CornerRadius="12"
+                Background="#FAFAFA"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+            <StackPanel Spacing="16">
+                <!-- Abschnitt 1: Service-Name -->
+                <Border Background="White"
+                        CornerRadius="8"
+                        Padding="12">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Service‑Name" FontWeight="SemiBold"/>
+                        <TextBox Text="{Binding Name}" Watermark="My Service"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Abschnitt 2: Anmeldedaten -->
+                <Border Background="White"
+                        CornerRadius="8"
+                        Padding="12">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Username" FontWeight="SemiBold"/>
+                        <TextBox Text="{Binding UserName}" Watermark="username123"/>
+                        <TextBlock Text="Email" FontWeight="SemiBold" Margin="0,8,0,0"/>
+                        <TextBox Text="{Binding Email}" Watermark="email@example.com"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Abschnitt 3: Sicherheit -->
+                <Border Background="White"
+                        CornerRadius="8"
+                        Padding="12">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Password" FontWeight="SemiBold"/>
+                        <TextBox Text="{Binding Password}" Watermark="••••••••" PasswordChar="•"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Abschnitt 4: URL & Metadaten -->
+                <Border Background="White"
+                        CornerRadius="8"
+                        Padding="12">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="URL" FontWeight="SemiBold"/>
+                        <TextBox Text="{Binding Url}" Watermark="https://..."/>
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="12"
+                                    Margin="0,8,0,0">
+                            <StackPanel Width="140">
+                                <TextBlock Text="Created At" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding CreatedAt}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Feedback -->
+                <TextBlock x:Name="FeedbackText"
+                           Text=""
+                           Foreground="Green"
+                           TextAlignment="Center"
+                           IsVisible="False"/>
+
+                <Button x:Name="SubmitButton"
+                        Content="Submit"
+                        Height="42"
+                        Background="#3366FF"
+                        Foreground="White"
+                        Command="{Binding SaveCommand}"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        HorizontalAlignment="Stretch"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

@@ -15,7 +15,7 @@ namespace PasswordManager.MVVMApp.ViewModels
         /// <summary>
         /// The base URL for the API endpoints.
         /// </summary>
-        protected static readonly string API_BASE_URL = "https://localhost:7074/api/";
+        protected static readonly string API_BASE_URL = "https://localhost:7203/api/";
 
         /// <summary>
         /// Singleton instance of the application settings.
