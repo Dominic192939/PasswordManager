@@ -22,5 +22,10 @@ namespace PasswordManager.MVVMApp.Models
         public void AfterCopyProperties(IMockVaultEntry other) { }
 
         public void BeforeCopyProperties(IMockVaultEntry other, ref bool handled){ }
+
+        public override string ToString()
+        {
+            return $"{Name} {UserName} {Email}";
+        }
     }
 }
