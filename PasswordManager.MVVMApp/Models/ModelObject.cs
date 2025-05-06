@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 using System.Linq;
 
-namespace PasswordManager.WebApi.Models
+namespace PasswordManager.MVVMApp.Models
 {
     /// <summary>
     /// Represents an abstract base class for model objects that are identifiable.
@@ -51,12 +51,6 @@ namespace PasswordManager.WebApi.Models
 
 
         public void BeforeCopyProperties(IIdentifiable other, ref bool handled) { }
-
-
-        void IIdentifiable.AfterCopyProperties(IIdentifiable other) { }
-
-
-        void IIdentifiable.BeforeCopyProperties(IIdentifiable other, ref bool handled) { }
         #endregion methods
     }
 }

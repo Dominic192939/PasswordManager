@@ -27,7 +27,6 @@
 				<ColumnDefinition Width="35"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
 
-			<!-- Filter-Textbox nimmt die gesamte verfügbare Breite ein -->
 			<Button Grid.Column="0"	Grid.Row="0"
 				Background="Transparent"
 				Command="{Binding AddItemCommand}">
@@ -41,7 +40,6 @@
 				Text="{Binding Filter}"
 				HorizontalAlignment="Stretch" />
 
-			<!-- Button mit fester Breite -->
 			<Button	Grid.Column="2"	Grid.Row="0"
 				Background="Transparent"
 				Command="{Binding LoadModelsCommand}">
@@ -52,22 +50,26 @@
 		</Grid>
 
 		<DataGrid Grid.Column="0" Grid.Row="1"
-			x:Name="dataGrid"
-			BorderThickness="1"
-			BorderBrush="Gray"
-			IsReadOnly="True"
-			ItemsSource="{Binding Models}"
-			SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
-			AutoGenerateColumns="False">
+					x:Name="dataGrid"
+					BorderThickness="1"
+					BorderBrush="Gray"
+					IsReadOnly="True"
+					ItemsSource="{Binding FilteredModels}"
+					SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+					AutoGenerateColumns="False">
 			<DataGrid.Columns>
 				<DataGridTextColumn Header="Name" Binding="{Binding Name}" />
-				<DataGridTemplateColumn Width="Auto" Header="Actions">
+				<DataGridTextColumn Header="URL" Binding="{Binding Url}" />
+				<DataGridTextColumn Header="Benutzername" Binding="{Binding UserName}" />
+				<DataGridTextColumn Header="E-Mail" Binding="{Binding Email}" />
+				<DataGridTextColumn Header="Passwort" Binding="{Binding Password}" />
+				<DataGridTemplateColumn Width="Auto" Header="Aktionen">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
 							<StackPanel Orientation="Horizontal">
 								<Button
 									Background="Transparent"
-									Command="{Binding #dataGrid.((vm:MockVaultEntriesViewModel)DataContext).EditItemCommand}"
+									Command="{Binding EditItemCommand}"
 									CommandParameter="{Binding}">
 									<StackPanel Orientation="Horizontal" Width="20" Height="20">
 										<Image Stretch="" Source="/Assets/edit.png"></Image>
@@ -75,7 +77,7 @@
 								</Button>
 								<Button
 									Background="Transparent"
-									Command="{Binding #dataGrid.((vm:MockVaultEntriesViewModel)DataContext).DeleteItemCommand}"
+									Command="{Binding DeleteItemCommand}"
 									CommandParameter="{Binding}">
 									<StackPanel Orientation="Horizontal" Width="20" Height="20">
 										<Image Stretch="" Source="/Assets/delete.png"></Image>

@@ -14,6 +14,16 @@ namespace PasswordManager.WebApi
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.WithOrigins("http://127.0.0.1:5500") // oder ggf. andere Frontend-Adresse
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -22,8 +32,13 @@ namespace PasswordManager.WebApi
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+      
 
             app.UseHttpsRedirection();
+
+
+            // CORS aktivieren:
+            app.UseCors();
 
             app.UseAuthorization();
 
