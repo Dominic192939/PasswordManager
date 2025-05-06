@@ -7,13 +7,13 @@ namespace PasswordManager.Logic.Entities
     public class MockVaultEntry : EntityObject, IMockVaultEntry
     {
         public string Name { get; set; } = string.Empty;
-        public string Url { get; set; } = string.Empty;
-        public string UserName { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
+        public string? Url { get; set; } = string.Empty;
+        public string? UserName { get; set; } = string.Empty;
+        public string? Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
 
         #region navigation properties
-        public string MockUserUserName { get; set; } = string.Empty;
+        public string? MockUserUserName { get; set; } = string.Empty;
         public MockUser? MockUser { get; set; }
         #endregion navigation properties
 

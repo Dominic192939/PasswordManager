@@ -84,16 +84,31 @@ namespace PasswordManager.MVVMApp.ViewModels
         {
             bool canClose = false;
             using var httpClient = new HttpClient { BaseAddress = new Uri(API_BASE_URL) };
-            var tmpModel = new { };
             try
             {
                 if (Model.Guid == Guid.Empty)
                 {
-                    var response = httpClient.PostAsync(
+                    string json = JsonSerializer.Serialize(Model);
+                    Console.WriteLine(json);
+
+                    var endpoint = "MockVaultEntries";
+                    var fullUrl = new Uri(httpClient.BaseAddress!, endpoint);
+                    Console.WriteLine("Finale URL: " + fullUrl);
+
+                    // Breakpoint hier setzen
+                    var response = await httpClient.PostAsync(
                         "MockVaultEntries",
-                        new StringContent(JsonSerializer.Serialize(tmpModel),
-                            Encoding.UTF8,
-                            "application/json")).Result;
+                        new StringContent((json), Encoding.UTF8, "application/json"));
+                    //var response = httpClient.PostAsync(
+                    //    "MockVaultEntries",
+                    //    new StringContent(JsonSerializer.Serialize(Model),
+                    //        Encoding.UTF8,
+                    //        "application/json")).Result;
+
+                    var endpoint2 = "MockVaultEntries";
+                    var fullUrl2 = new Uri(httpClient.BaseAddress!, endpoint2);
+                    Console.WriteLine("Finale URL: " + fullUrl2);
+
 
 
                     if (response.IsSuccessStatusCode)
@@ -111,7 +126,7 @@ namespace PasswordManager.MVVMApp.ViewModels
                 }
                 else
                 {
-                    var response = httpClient.PutAsync("MockVaultEntries", new StringContent(JsonSerializer.Serialize(Model), Encoding.UTF8, "application/json")).Result;
+                    var response = httpClient.PutAsync($"MockVaultEntries/{Guid}", new StringContent(JsonSerializer.Serialize(Model), Encoding.UTF8, "application/json")).Result;
 
                     if (response.IsSuccessStatusCode)
                     {

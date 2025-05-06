@@ -14,6 +14,13 @@ namespace PasswordManager.WebApi
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddControllers()
+              .ConfigureApiBehaviorOptions(options =>
+              { 
+                  options.SuppressModelStateInvalidFilter = true; 
+              });
+
+
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowLocalFrontend", policy =>
@@ -32,7 +39,7 @@ namespace PasswordManager.WebApi
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-      
+
 
             app.UseHttpsRedirection();
 
