@@ -57,38 +57,38 @@ namespace PasswordManager.MVVMApp.ViewModels
         [RelayCommand]
         public async Task AddItem()
         {
-            var companyWindow = new MockEntryWindow();
-            var viewModel = new MockVaultEntryViewModel { CloseAction = companyWindow.Close };
+            var entiteWindow = new MockEntryWindow();
+            var viewModel = new MockVaultEntryViewModel { CloseAction = entiteWindow.Close };
 
-            companyWindow.DataContext = viewModel;
+            entiteWindow.DataContext = viewModel;
             // Aktuelles Hauptfenster als Parent setzen
             var mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
             if (mainWindow != null)
             {
-                await companyWindow.ShowDialog(mainWindow);
+                await entiteWindow.ShowDialog(mainWindow);
                 _ = LoadEntitiesAsync();
             }
         }
         [RelayCommand]
         public async Task EditItem(Models.MockVaultEntry entity)
         {
-            var companyWindow = new MockEntryWindow();
-            var viewModel = new MockVaultEntryViewModel { Model = entity, CloseAction = companyWindow.Close };
+            var entityWindow = new MockEntryWindow();
+            var viewModel = new MockVaultEntryViewModel { Model = entity, CloseAction = entityWindow.Close };
 
-            companyWindow.DataContext = viewModel;
+            entityWindow.DataContext = viewModel;
             // Aktuelles Hauptfenster als Parent setzen
             var mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
 
             if (mainWindow != null)
             {
-                await companyWindow.ShowDialog(mainWindow);
+                await entityWindow.ShowDialog(mainWindow);
                 _ = LoadEntitiesAsync();
             }
         }
         [RelayCommand]
         public async Task DeleteItem(Models.MockVaultEntry entity)
         {
-            var messageDialog = new MessageDialog("Delete", $"Wollen Sie die Firma '{entity.Name}' löschen?", MessageType.Question);
+            var messageDialog = new MessageDialog("Delete", $"Wollen Sie die Entität '{entity.Name}' löschen?", MessageType.Question);
             var mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
 
             // Aktuelles Hauptfenster als Parent setzen
