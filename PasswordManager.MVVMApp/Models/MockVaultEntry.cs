@@ -6,9 +6,8 @@ namespace PasswordManager.MVVMApp.Models
     /// <summary>
     /// This model represents a transmission model for the 'MockVaultEntry' data unit.
     /// </summary>
-    public class MockVaultEntry : ModelObject, IMockVaultEntry
+    public class MockVaultEntry : MVVMApp.Models.ModelObject, Common.Contracts.IMockVaultEntry
     {
-        public Guid Guid { get; set; } // GUID des Eintrags
         public string Name { get; set; } // Name des Services (z.B. "Google")
         public string Url { get; set ; } // URL des Services (z.B. "https://www.google.com")
         public string UserName { get; set; } // Username des Services

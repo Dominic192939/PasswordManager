@@ -57,7 +57,7 @@
                            IsReadOnly="True"
                            ItemsSource="{Binding Entities}"
                            SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
-                           AutoGenerateColumns="True">
+                           AutoGenerateColumns="False">
 			<controls:DataGrid.Columns>
 				<controls:DataGridTextColumn Header="Name" Binding="{Binding Name}" />
 				<controls:DataGridTextColumn Header="URL" Binding="{Binding Url}" />

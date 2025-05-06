@@ -1,11 +1,12 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using CommunityToolkit.Mvvm.Input;
 using PasswordManager.MVVMApp.Models;
+using CommunityToolkit.Mvvm.Input;
 using PasswordManager.MVVMApp.Views;
 using System;
-using System.Net.Http;
 using System.Text;
+using System.Net.Http;
+using System.Text.Json;
 using System.Windows.Input;
 
 namespace PasswordManager.MVVMApp.ViewModels
@@ -83,19 +84,17 @@ namespace PasswordManager.MVVMApp.ViewModels
         {
             bool canClose = false;
             using var httpClient = new HttpClient { BaseAddress = new Uri(API_BASE_URL) };
-
+            var tmpModel = new { };
             try
             {
                 if (Model.Guid == Guid.Empty)
                 {
-                    var response = await httpClient.PostAsync(
+                    var response = httpClient.PostAsync(
                         "MockVaultEntries",
-                        new StringContent(
-                            System.Text.Json.JsonSerializer.Serialize(Model),
+                        new StringContent(JsonSerializer.Serialize(tmpModel),
                             Encoding.UTF8,
-                            "application/json"
-                        )
-                    );
+                            "application/json")).Result;
+
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -107,12 +106,12 @@ namespace PasswordManager.MVVMApp.ViewModels
                         var mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
 
                         await messageDialog.ShowDialog(mainWindow!);
-                        Console.WriteLine($"Fehler beim Abrufen der Companies. Status: {response.StatusCode}");
+                        Console.WriteLine($"Fehler beim Abrufen der Entities. Status: {response.StatusCode}");
                     }
                 }
                 else
                 {
-                    var response = await httpClient.PutAsync("MockVaultEntries", new StringContent(System.Text.Json.JsonSerializer.Serialize(Model), Encoding.UTF8, "application/json"));
+                    var response = httpClient.PutAsync("MockVaultEntries", new StringContent(JsonSerializer.Serialize(Model), Encoding.UTF8, "application/json")).Result;
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -120,7 +119,7 @@ namespace PasswordManager.MVVMApp.ViewModels
                     }
                     else
                     {
-                        Console.WriteLine($"Fehler beim Abrufen der Companies. Status: {response.StatusCode}");
+                        Console.WriteLine($"Fehler beim Abrufen der Entities. Status: {response.StatusCode}");
                     }
                 }
             }
