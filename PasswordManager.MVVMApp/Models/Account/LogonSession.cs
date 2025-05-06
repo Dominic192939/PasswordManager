@@ -1,5 +1,4 @@
-﻿using PasswordManager.WebApi.Models;
-using System;
+﻿using System;
 
 namespace PasswordManager.MVVMApp.Models.Account
 {
