@@ -4,8 +4,8 @@
     padding: 0;
     background-color: #f4f4f4;
     color: #333;
-    width: 300px;
-    min-height: 320px;
+    width: 360px;
+    min-height: 240px;
 }
 
 h1 {
@@ -21,14 +21,14 @@ input, button {
 }
 
 button {
-    background-color: #007acc;
+    background-color: #898d91;
     color: white;
     border: none;
     cursor: pointer;
 }
 
     button:hover {
-        background-color: #005ea6;
+        background-color: #898d91;
     }
 
 .password-container {
@@ -50,8 +50,12 @@ button {
 }
 
 
-}
-
     .eye-button:hover {
         background-color: #aaa;
     }
+
+#status {
+    margin-top: 10px;
+    font-weight: bold;
+}
+

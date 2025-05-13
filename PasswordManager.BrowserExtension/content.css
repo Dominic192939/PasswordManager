@@ -1,0 +1,12 @@
+﻿#pm-mini-popup {
+    position: absolute;
+    background-color: #898d91;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 5px;
+    z-index: 9999;
+    cursor: pointer;
+    font-size: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.2s ease-in-out;
+}

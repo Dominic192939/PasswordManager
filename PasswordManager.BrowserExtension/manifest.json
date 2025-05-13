@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "PasswordManager Autofill",
   "version": "1.0",
-  "description": "Save and fill passwords automatically.",
+  "description": "Speichere und fülle Passwörter automatisch aus.",
   "permissions": [ "storage", "activeTab", "scripting", "tabs" ],
   "background": {
     "service_worker": "background.js"
@@ -14,7 +14,8 @@
   "content_scripts": [
     {
       "matches": [ "<all_urls>" ],
-      "js": [ "content.js" ]
+      "js": [ "content.js" ],
+      "css": ["content.css"]
     }
   ],
   "icons": {
