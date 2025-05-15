@@ -1,11 +1,12 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using CommunityToolkit.Mvvm.Input;
 using PasswordManager.MVVMApp.Models;
+using CommunityToolkit.Mvvm.Input;
 using PasswordManager.MVVMApp.Views;
 using System;
-using System.Net.Http;
 using System.Text;
+using System.Net.Http;
+using System.Text.Json;
 using System.Windows.Input;
 
 namespace PasswordManager.MVVMApp.ViewModels
@@ -83,19 +84,32 @@ namespace PasswordManager.MVVMApp.ViewModels
         {
             bool canClose = false;
             using var httpClient = new HttpClient { BaseAddress = new Uri(API_BASE_URL) };
-
             try
             {
                 if (Model.Guid == Guid.Empty)
                 {
+                    string json = JsonSerializer.Serialize(Model);
+                    Console.WriteLine(json);
+
+                    var endpoint = "MockVaultEntries";
+                    var fullUrl = new Uri(httpClient.BaseAddress!, endpoint);
+                    Console.WriteLine("Finale URL: " + fullUrl);
+
+                    // Breakpoint hier setzen
                     var response = await httpClient.PostAsync(
                         "MockVaultEntries",
-                        new StringContent(
-                            System.Text.Json.JsonSerializer.Serialize(Model),
-                            Encoding.UTF8,
-                            "application/json"
-                        )
-                    );
+                        new StringContent((json), Encoding.UTF8, "application/json"));
+                    //var response = httpClient.PostAsync(
+                    //    "MockVaultEntries",
+                    //    new StringContent(JsonSerializer.Serialize(Model),
+                    //        Encoding.UTF8,
+                    //        "application/json")).Result;
+
+                    var endpoint2 = "MockVaultEntries";
+                    var fullUrl2 = new Uri(httpClient.BaseAddress!, endpoint2);
+                    Console.WriteLine("Finale URL: " + fullUrl2);
+
+
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -107,12 +121,12 @@ namespace PasswordManager.MVVMApp.ViewModels
                         var mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
 
                         await messageDialog.ShowDialog(mainWindow!);
-                        Console.WriteLine($"Fehler beim Abrufen der Companies. Status: {response.StatusCode}");
+                        Console.WriteLine($"Fehler beim Abrufen der Entities. Status: {response.StatusCode}");
                     }
                 }
                 else
                 {
-                    var response = await httpClient.PutAsync("MockVaultEntries", new StringContent(System.Text.Json.JsonSerializer.Serialize(Model), Encoding.UTF8, "application/json"));
+                    var response = httpClient.PutAsync($"MockVaultEntries/{Guid}", new StringContent(JsonSerializer.Serialize(Model), Encoding.UTF8, "application/json")).Result;
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -120,7 +134,7 @@ namespace PasswordManager.MVVMApp.ViewModels
                     }
                     else
                     {
-                        Console.WriteLine($"Fehler beim Abrufen der Companies. Status: {response.StatusCode}");
+                        Console.WriteLine($"Fehler beim Abrufen der Entities. Status: {response.StatusCode}");
                     }
                 }
             }

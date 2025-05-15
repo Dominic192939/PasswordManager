@@ -1,12 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>PasswordManager</title>
+    <link rel="stylesheet" href="styles/popup.css">
+</head>
+<body>
+    <h1>PasswordManager</h1>
 
-namespace PasswordManager.BrowserExtension
-{
-    class popup
-    {
-    }
-}
+    <form id="passwordForm">
+        <label for="site">Website:</label>
+        <input type="text" id="site" name="site" placeholder="z.B. example.com" required>
+
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="password">Password:</label>
+        <div class="password-container">
+            <input type="password" id="password" name="password" required>
+            <button type="button" id="togglePassword" class="eye-button">👁️</button>
+        </div>
+
+        <button type="submit">Save</button>
+    </form>
+
+    <p id="status"></p>
+
+    <script src="popup.js"></script>
+</body>
+</html>

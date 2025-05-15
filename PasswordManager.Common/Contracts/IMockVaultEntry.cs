@@ -3,11 +3,11 @@
     public interface IMockVaultEntry : IIdentifiable
     {
         string Name { get; set; }
-        string Url { get; set; }
-        string UserName { get; set; }
-        string Email { get; set; }
+        string? Url { get; set; }
+        string? UserName { get; set; }
+        string? Email { get; set; }
         string Password { get; set; }
-        string MockUserUserName { get; set; }
+        string? MockUserUserName { get; set; }
         /// <summary>
         /// Copies the properties of another object to this instance.
         /// </summary>
